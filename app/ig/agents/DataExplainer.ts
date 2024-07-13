@@ -42,9 +42,12 @@ export class ExtractIgDataExplanation extends StructuredTool {
 export async function extractDataExplanation(
   state: GraphState,
 ): Promise<Partial<GraphState>> {
+  console.log("In Data Explaineer")
   const { igrawdata } = state;
 
   const igdata: IgRawDataSchema[] = JSON.parse(igrawdata);
+
+  console.log("In Data Explaineer IgData:", igdata)
 
   const mapIgDatatoHumanmessage = (data: IgRawDataSchema[]) => {
     let humanmsg = [];
@@ -69,7 +72,10 @@ export async function extractDataExplanation(
                 },
                 {
                   type: "image_url",
-                  image_url: `${d.media_url}`,
+                  image_url: {
+                      "url": `${d.media_url}`,
+                      "detail": "high",
+                  },
                 },
                 {
                   type: "text",
@@ -96,12 +102,11 @@ export async function extractDataExplanation(
   const prompt = ChatPromptTemplate.fromMessages([
     [
       "system",
-      `You are an expert forensic detective with an IQ of Sherlock Holmes.
-      Currently, you are investigating a suspect whose Instagram post images and its caption text is given to you.
-      You are given the task to carefully and slowlty investigate the images and give a detailed explanation of each image about what type of images suspect like to take.
-      Plus you are also given the task to carefully and slowlty investigate the suspect caption text and give a detailed explanation of each caption text capturing the writing style the suspect have. 
-      `,
+      `You are an expert forensic detective with an IQ of Sherlock Holmes. `,
     ],
+    ["human",`Currently, you are investigating a suspect whose Instagram post images and its caption text is given to you.
+      You are given the task to carefully and slowlty investigate the images and give a detailed explanation of each image about what type of images suspect like to take.
+      Plus you are also given the task to carefully and slowlty investigate the suspect caption text and give a detailed explanation of each caption text capturing the writing style the suspect have.`],
     IgDataPromt,
   ]);
 
@@ -118,7 +123,7 @@ export async function extractDataExplanation(
   const explainedData: string = JSON.parse(response);
 
   return {
-    igexplaineddata: explainedData,
+    igexplaineddata: response,
   };
 }
 

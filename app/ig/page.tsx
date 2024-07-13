@@ -1,5 +1,6 @@
 import { ChatWindow } from "@/components/ChatWindow";
-import { testerFunc } from "./agents/IgPostGenerator";
+import { testGraph } from "./GraphConfig";
+import { testerFunc } from "./agents/ImageGenerator";
 
 export interface IgRawDataSchema {
   caption: string,
@@ -46,7 +47,8 @@ export default async function Ig() {
   // //console.log("REW",res["data"])
 
 
-  testerFunc();
+  testGraph();
+  // testerFunc();
   return (
     <div>
       Hi

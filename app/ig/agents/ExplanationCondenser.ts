@@ -66,6 +66,7 @@ const mapExplainedDatatoHumanmessage = (data: ExplainedData[]) => {
 export async function extractCondencedExplanation(
   state: GraphState,
 ): Promise<Partial<GraphState>> {
+  console.log("In Exp Cond")
   const { igexplaineddata } = state;
 
   if (!igexplaineddata) {
@@ -90,10 +91,10 @@ export async function extractCondencedExplanation(
     [
       "system",
       `You are an expert forensic detective with an IQ of Sherlock Holmes.
-      Currently, you are investigating a suspect whose Instagram profile post ids with detailed explanation of suspect post's image analysis plus caption text analysis is given to you.
-      You are given the task to carefully and slowlty investigate image analysis plus caption text analysis of each post and give a detailed report of image analysis and caption text analysis capturing as much information about the suspect as possible.
-      `,
+      `
     ],
+    ["human", `Currently, you are investigating a suspect whose Instagram profile post ids with detailed explanation of suspect post's image analysis and caption text analysis is given to you.
+      You are given the task to carefully and slowlty investigate image analysis and caption text analysis of each post and give a detailed report of image analysis and caption text analysis in one big pargagraph capturing as much information about the suspect as possible.`],
     ExplanationDataPromt,
   ]);
 
@@ -108,6 +109,8 @@ export async function extractCondencedExplanation(
 
   const response = await chain.invoke({});
   const explainedData: z.infer<typeof ResSchema> = JSON.parse(response);
+
+  console.log("EXP DATA",explainedData)
 
   return {
     userimagestyle: explainedData.mainimageanalysis,
