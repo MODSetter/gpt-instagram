@@ -2,12 +2,12 @@ import { ChatWindow } from "@/components/ChatWindow";
 import { testGraph } from "./GraphConfig";
 import { testerFunc } from "./agents/ImageGenerator";
 
-export interface IgRawDataSchema {
-  caption: string,
-  media_url: string,
-  media_type: string,
-  id: string
-}
+// export interface IgRawDataSchema {
+//   caption: string,
+//   media_url: string,
+//   media_type: string,
+//   id: string
+// }
 
 export default async function Ig() {
   // const response = await fetch(`https://graph.instagram.com/me/media?fields=caption,media_url,media_type&access_token=${process.env.IG_ACCESS_TOKEN}`)
@@ -47,7 +47,7 @@ export default async function Ig() {
   // //console.log("REW",res["data"])
 
 
-  testGraph();
+  // testGraph();
   // testerFunc();
   return (
     <div>

@@ -7,6 +7,7 @@ import { extractPostSuggestions } from "./agents/IgPostGenerator";
 import { viralCritiquer } from "./agents/ViralCritique";
 import { extractPostSuggestionsWithImages } from "./agents/ImageGenerator";
 import { z } from "zod";
+import { IGApiResponse } from "./DataTypes";
 
 const FeedbackSchema = z.array(
   z.object({
@@ -110,19 +111,19 @@ function createGraph() {
   return app;
 }
 
-export interface IgRawDataSchema {
-  caption: string,
-  media_url: string,
-  media_type: string,
-  id: string
-}
+// export interface IgRawDataSchema {
+//   caption: string,
+//   media_url: string,
+//   media_type: string,
+//   id: string
+// }
 
 export async function testGraph() {
   const app = createGraph();
   const req = await fetch(`https://graph.instagram.com/me/media?fields=caption,media_url,media_type&access_token=https://graph.instagram.com/me?fields=id,username&access_token=IGQWRPaDVldGx0OUpsM3VUeElNQWMyM0lXTVJFTHVNeGVLVjg1OFg4bVplblZASN1hDXzBJOE5ZAM25JdWZA2S0xkS2VfdUpDUV9tOEMwS2lGbzRvNm9DZAFZAyR3JaUDRyOXdvNk1KSGFYRmVneW1NdXVYTjlXcm9HN0kZD`)
 
     const res = await req.json();
-    const igdata: IgRawDataSchema[] = res["data"]
+    const igdata: IGApiResponse[] = res["data"]
     //console.log(JSON.stringify(igdata))
 
   const response = await app.invoke({

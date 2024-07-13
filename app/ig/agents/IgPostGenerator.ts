@@ -22,6 +22,7 @@ import { convertToOpenAIFunction } from "@langchain/core/utils/function_calling"
 
 import { TavilySearchAPIRetriever } from "@langchain/community/retrievers/tavily_search_api";
 import { RunnableSequence } from "@langchain/core/runnables";
+import { ResearchedDataSchema } from "../DataTypes";
 
 export class ContentImprover extends StructuredTool {
   schema = z.object({
@@ -58,7 +59,7 @@ export class ContentImprover extends StructuredTool {
   }
 }
 
-const searchTool = new DynamicTool({
+export const searchTool = new DynamicTool({
   name: "web-search-tool",
   description: "Tool for getting the latest information from the web",
   func: async (searchQuery: string, runManager) => {
@@ -124,17 +125,9 @@ const feedbacktoHumanmessage = (data: z.infer<typeof FeedbackSchema>) => {
   return humanmsg;
 };
 
-const ResearchDataSchema = z.array(
-  z.object({
-    postid: z.string(),
-    imagepromt: z.string(),
-    caption: z.string(),
-    tags: z.array(z.string()),
-  }),
-);
 
 const mapResearchDatatoHumanmessage = (
-  data: z.infer<typeof ResearchDataSchema>,
+  data: z.infer<typeof ResearchedDataSchema>,
 ) => {
   let humanmsg = [];
 
@@ -404,189 +397,3 @@ export async function extractPostSuggestions(
     return {}
   }
 }
-
-// AGENT TESTER CODE
-// export async function testerFunc() {
-//   const SuspectData = new HumanMessage({
-//     content: [
-//       {
-//         type: "text",
-//         text: "==========================================================================",
-//       },
-//       {
-//         type: "text",
-//         text: "PERSON or SUSPECT INSTAGRAM Investigative analysis: ",
-//       },
-//       {
-//         type: "text",
-//         text: `PERSON or SUSPECT Instagram's post's image style: The analysis of the suspect's Instagram images reveals a variety of preferences and personality traits. The suspect enjoys capturing scenic landscapes, particularly those involving friends, suggesting an appreciation for natural beauty and social interaction. There is a notable affection for travel and family moments, especially in picturesque settings such as a scenic European city. Additionally, the suspect seems to favor images that portray a sense of fun and spontaneity, including playful struggles, candid group selfies, and humorous encounters. The presence of edgy and gritty urban aesthetics in some posts indicates an interest in raw, unpolished settings. Fashion and personal style also play a significant role in the suspect's imagery, with sharp outfits and introspective close-ups suggesting a flair for stylish and moody photography. Fitness and self-improvement are also highlighted, as seen in gym selfies and supportive captions regarding workout experiences.`,
-//       },
-//       {
-//         type: "text",
-//         text: `PERSON or SUSPECT Instagram's post's caption text writing style: The suspect's Instagram captions reveal a multifaceted personality characterized by humor, informality, and a penchant for playful and witty commentary. Minimalist captions, such as simple emojis or short jokes, suggest a focus on the visual impact of the images rather than detailed descriptions. The suspect often employs self-deprecating humor and lighthearted teasing, indicating a humble and unpretentious demeanor. There is a notable appreciation for creative activities and a sense of nostalgia in reflective posts about past memories. The captions suggest a sociable individual who values friendships and family, often highlighting shared experiences and inside jokes. The playful use of language and creative captions further illustrate a person who enjoys engaging with their audience in a casual and entertaining manner.`,
-//       },
-//       {
-//         type: "text",
-//         text: "==========================================================================",
-//       },
-//     ],
-//   });
-
-  // const prompt = ChatPromptTemplate.fromMessages([
-  //   [
-  //     "system",
-  //     `You are a Social Media Marketing expert with speciality in Instagram Marketing. You are an expert in making viral Instagram Posts.
-  //     `,
-  //   ],
-  //   [
-  //     "human",
-  //     `You are given the detailed Investigative analysis of a person's or suspect's Instagram post's image style and caption text writing style.
-  //     Based on the given user QUERY you must always call one of the provided tools and then generate highly relevant exact 6 Instagram post suggestion's.
-  //     Each post suggestion should contain a unique id, caption text without hashtags but with emotes inspired little bit by the person's(also known as suspect) caption text writing style and
-  //     a image explanation promt of that caption text suitable for OpenAI Dalle inspired little bit by the person's(also known as suspect) image style  and
-  //     popular hashtags that can be used with post.`,
-  //   ],
-  //   ["human", "QUERY : {input}"],
-  //   SuspectData,
-  //   new MessagesPlaceholder("agent_scratchpad"),
-  // ]);
-
-//   const responseSchema = z.object({
-//     postsuggestions: z
-//       .array(
-//         z.object({
-//           postid: z.string().describe("Unique Post Id"),
-//           imagepromt: z.string().describe("Suggested image promt"),
-//           caption: z.string().describe("Suggested Caption without hashtags"),
-//           tags: z
-//             .array(z.string().describe("suggested hashtag"))
-//             .describe("List of all the suggested hashtags"),
-//         }),
-//       )
-//       .describe("List of Instagram Post Suggestions"),
-//   });
-
-//   const responseOpenAIFunction = {
-//     name: "response",
-//     description: "Return the response to the user",
-//     parameters: zodToJsonSchema(responseSchema),
-//   };
-
-//   const structuredOutputParser = (
-//     message: AIMessage,
-//   ): FunctionsAgentAction | AgentFinish => {
-//     if (message.content && typeof message.content !== "string") {
-//       throw new Error("This agent cannot parse non-string model responses.");
-//     }
-//     if (message.additional_kwargs.function_call) {
-//       const { function_call } = message.additional_kwargs;
-//       try {
-//         const toolInput = function_call.arguments
-//           ? JSON.parse(function_call.arguments)
-//           : {};
-//         // If the function call name is `response` then we know it's used our final
-//         // response function and can return an instance of `AgentFinish`
-//         if (function_call.name === "response") {
-//           return { returnValues: { ...toolInput }, log: message.content };
-//         }
-//         return {
-//           tool: function_call.name,
-//           toolInput,
-//           log: `Invoking "${function_call.name}" with ${
-//             function_call.arguments ?? "{}"
-//           }\n${message.content}`,
-//           messageLog: [message],
-//         };
-//       } catch (error) {
-//         throw new Error(
-//           `Failed to parse function arguments from chat model response. Text: "${function_call.arguments}". ${error}`,
-//         );
-//       }
-//     } else {
-//       return {
-//         returnValues: { output: message.content },
-//         log: message.content,
-//       };
-//     }
-//   };
-
-//   const formatAgentSteps = (steps: AgentStep[]): BaseMessage[] =>
-//     steps.flatMap(({ action, observation }) => {
-//       if ("messageLog" in action && action.messageLog !== undefined) {
-//         const log = action.messageLog as BaseMessage[];
-//         return log.concat(new FunctionMessage(observation, action.tool));
-//       } else {
-//         return [new AIMessage(action.log)];
-//       }
-//     });
-
-//   const llm = new ChatOpenAI({
-//     model: "gpt-4o",
-//   });
-
-//   const llmWithTools = llm.bind({
-//     functions: [convertToOpenAIFunction(searchTool), responseOpenAIFunction],
-//   });
-//   /** Create the runnable */
-
-//   const runnableAgent = RunnableSequence.from<{
-//     input: string;
-//     steps: Array<AgentStep>;
-//   }>(
-//     // @ts-ignore
-//     [
-//       {
-//         input: (i) => i.input,
-//         agent_scratchpad: (i) => formatAgentSteps(i.steps),
-//       },
-//       prompt,
-//       llmWithTools,
-//       structuredOutputParser,
-//     ],
-//   );
-//   // @ts-ignore
-//   const executor = AgentExecutor.fromAgentAndTools({
-//     // @ts-ignore
-//     agent: runnableAgent,
-//     // @ts-ignore
-//     tools: [searchTool],
-//   });
-//   /** Call invoke on the agent */
-//   const res = await executor.invoke({
-//     input: "US Elections Candidates",
-//   });
-
-//   // const resjson = await res.json();
-//   // console.log("Res",JSON.stringify(res))
-//   console.log("Res", res["postsuggestions"]);
-
-//   // const tools = [searchTool];
-//   // const model = new ChatOpenAI({
-//   //   model: "gpt-4o",
-//   // });
-
-//   // const modelWithTools = model.withStructuredOutput(igExpTool)
-
-//   // const agent = await createOpenAIFunctionsAgent({
-//   //   // @ts-ignore
-//   //   llm: model,
-//   //     // @ts-ignore
-//   //   tools,
-//   //     // @ts-ignore
-//   //   prompt,
-//   // });
-
-//   // const agentExecutor = new AgentExecutor({
-//   //   agent,
-//   //     // @ts-ignore
-//   //   tools,
-//   // });
-
-//   // // const chain = prompt.pipe(searchTool).pipe(tool);
-
-//   // const result = await agentExecutor.invoke({
-//   //   input: "US Elections",
-//   // });
-
-//   // console.log("Suggester Tester", result)
-// }
