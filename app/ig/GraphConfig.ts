@@ -88,7 +88,7 @@ const verifyQuality = (
 /**
  * TODO: implement
  */
-function createGraph() {
+export function createGraph() {
   const graph = new StateGraph<GraphState>({
     channels: graphChannels,
   })
