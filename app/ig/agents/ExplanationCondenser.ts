@@ -95,7 +95,7 @@ export async function extractCondencedExplanation(
 
   const tool = new ExtractExplainedDataExplanation();
   const model = new ChatOpenAI({
-    model: "gpt-4o",
+    model: "gpt-3.5-turbo",
   });
 
   const modelWithTools = model.withStructuredOutput(tool);

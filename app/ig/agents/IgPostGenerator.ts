@@ -294,7 +294,7 @@ export async function extractPostSuggestions(
       });
 
     const llm = new ChatOpenAI({
-      model: "gpt-4o",
+      model: "gpt-3.5-turbo",
       temperature: 0.3,
     });
 

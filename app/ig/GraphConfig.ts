@@ -131,6 +131,7 @@ export async function testGraph() {
     igrawdata: JSON.stringify(igdata),
   });
 
+  console.log(response)
 
   console.log(response["resdatawithimages"])
   console.log(JSON.parse(response["resdatawithimages"]))
