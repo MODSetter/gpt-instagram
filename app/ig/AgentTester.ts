@@ -509,39 +509,39 @@ export async function imgGentesterFunc(){
             '#Vote2023'
           ]
         },
-        {
-          imagepromt: 'A well-dressed individual in an urban, edgy setting, with a gritty background highlighting contrast between personal style and raw surroundings',
-          caption: 'Style meets substance in the heart of the city 🌆🕶️#VoteResponsibly' ,
-          tags: [
-            '#UrbanStyle',
-            '#FashionForward',
-            '#VoteResponsibly',
-            '#USACandidates',
-            '#CityVibes'
-          ]
-        },
-        {
-          imagepromt: 'Candid selfie of friends at a political rally or meeting, emphasizing engagement and participation',
-          caption: 'Making our voices heard, one rally at a time 🗣️🇺🇸#EngagedCitizens' ,
-          tags: [
-            '#PoliticalRally',
-            '#EngagedCitizens',
-            '#USACandidates2023',
-            '#DemocracyInAction',
-            '#YouthVote'
-          ]
-        },
-        {
-          imagepromt: 'An individual working out in a gym, promoting the idea of self-improvement and dedication',
-          caption: 'Stronger every day, ready for any challenge 💪 #CandidateFitness',
-          tags: [
-            '#FitnessGoals',
-            '#SelfImprovement',
-            '#CandidateFitness',
-            '#VoteSmart',
-            '#USPresidentialCandidates'
-          ]
-        },
+        // {
+        //   imagepromt: 'A well-dressed individual in an urban, edgy setting, with a gritty background highlighting contrast between personal style and raw surroundings',
+        //   caption: 'Style meets substance in the heart of the city 🌆🕶️#VoteResponsibly' ,
+        //   tags: [
+        //     '#UrbanStyle',
+        //     '#FashionForward',
+        //     '#VoteResponsibly',
+        //     '#USACandidates',
+        //     '#CityVibes'
+        //   ]
+        // },
+        // {
+        //   imagepromt: 'Candid selfie of friends at a political rally or meeting, emphasizing engagement and participation',
+        //   caption: 'Making our voices heard, one rally at a time 🗣️🇺🇸#EngagedCitizens' ,
+        //   tags: [
+        //     '#PoliticalRally',
+        //     '#EngagedCitizens',
+        //     '#USACandidates2023',
+        //     '#DemocracyInAction',
+        //     '#YouthVote'
+        //   ]
+        // },
+        // {
+        //   imagepromt: 'An individual working out in a gym, promoting the idea of self-improvement and dedication',
+        //   caption: 'Stronger every day, ready for any challenge 💪 #CandidateFitness',
+        //   tags: [
+        //     '#FitnessGoals',
+        //     '#SelfImprovement',
+        //     '#CandidateFitness',
+        //     '#VoteSmart',
+        //     '#USPresidentialCandidates'
+        //   ]
+        // },
         // {
         //   imagepromt: 'A humorous group photo of friends or colleagues mimicking a playful struggle, showing fun and spontaneity',
         //   caption: 'Just another day of friendly debates and big ideas 😂🗳️#ElectionSeason' ,
@@ -563,9 +563,11 @@ export async function imgGentesterFunc(){
       response.push(entry)
     }
 
-    const res = await tool.batch(response);
+    console.log(response)
 
-    console.log(res)
+    // const res = await tool.batch(response);
+
+    // console.log(res)
     console.log(JSON.stringify(response))
     // return {
     //   resdatawithimages: JSON.stringify(response),

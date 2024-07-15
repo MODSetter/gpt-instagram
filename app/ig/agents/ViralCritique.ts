@@ -65,6 +65,30 @@ export const mapDatatoHumanmessage = (data: z.infer<typeof ResearchedDataSchema>
   return humanmsg;
 };
 
+const isFeedbackSchema = z.array(
+  z.object({
+    postid: z.string(),
+    imagepromtfeedback: z.string(),
+    igcaptionfeedback: z.string(),
+    tagsfeedback: z.string(),
+  }),
+);
+
+const isFeedBackOkay = (critiquefeedback: z.infer<typeof isFeedbackSchema>) => {
+  let isOkay = true;
+  for (const d of critiquefeedback) {
+    if (
+      d.imagepromtfeedback.toLocaleLowerCase() !== "okay" ||
+      d.igcaptionfeedback.toLocaleLowerCase() !== "okay" ||
+      d.tagsfeedback.toLocaleLowerCase() !== "okay"
+    ) {
+      isOkay = false;
+    }
+  }
+
+  return isOkay;
+};
+
 export async function viralCritiquer(
   state: GraphState,
 ): Promise<Partial<GraphState>> {
@@ -117,10 +141,13 @@ export async function viralCritiquer(
   const chain = prompt.pipe(modelWithTools).pipe(tool);
 
   const response = await chain.invoke({});
-  const res: z.infer<typeof feedbackschema> = JSON.parse(response);
+  const res: z.infer<typeof isFeedbackSchema> = JSON.parse(response);
+
+  const feedback = isFeedBackOkay(res);
 
   console.log("Crit Feedback", response)
   return {
     critiquefeedback: JSON.stringify(res),
+    isfeedBackOkay: feedback
   };
 }

@@ -125,7 +125,6 @@ const feedbacktoHumanmessage = (data: z.infer<typeof FeedbackSchema>) => {
   return humanmsg;
 };
 
-
 const mapResearchDatatoHumanmessage = (
   data: z.infer<typeof ResearchedDataSchema>,
 ) => {
@@ -168,6 +167,7 @@ export async function extractPostSuggestions(
     usertextstyle,
     researcheddata,
     critiquefeedback,
+    isfeedBackOkay,
   } = state;
 
   console.log("In Ig Post Gen");
@@ -213,9 +213,9 @@ export async function extractPostSuggestions(
       [
         "human",
         `You are given the detailed Investigative analysis of a person's or suspect's Instagram post's image style and caption text writing style.
-        Based on the given user QUERY you must always call one of the provided tools and then generate highly relevant exact 6 Instagram post suggestion's.
+        Based on the given user QUERY you must always call one of the provided tools and then generate highly relevant exact 3 Instagram post suggestion's.
         Each post suggestion should contain a unique id, caption text without hashtags but with emotes inspired little bit by the person's(also known as suspect) caption text writing style and
-        a image explanation promt of that caption text suitable for OpenAI Dalle inspired little bit by the person's(also known as suspect) image style  and
+        a image explanation promt of that caption text suitable for OpenAI Dalle inspired little bit by the person's(also known as suspect) image style and
         popular hashtags that can be used with post.`,
       ],
       ["human", "QUERY : {input}"],
@@ -331,69 +331,66 @@ export async function extractPostSuggestions(
       input: query,
     });
 
-    console.log("iNITIAL GEN", res["postsuggestions"])
+    console.log("iNITIAL GEN", res["postsuggestions"]);
 
     return {
       researcheddata: JSON.stringify(res["postsuggestions"]),
     };
-  }else{
-    if (critiquefeedback) {
-      const feedback = isFeedBackOkay(JSON.parse(critiquefeedback));
-  
-      if (!feedback) {
-        const resdata = mapResearchDatatoHumanmessage(JSON.parse(researcheddata));
-        const critdata = feedbacktoHumanmessage(JSON.parse(critiquefeedback));
-  
-        const postswithcrit = new HumanMessage({
-          content: [
-            {
-              type: "text",
-              text: "USER INSTAGRAM POST'S : ",
-            },
-            ...resdata,
-            {
-              type: "text",
-              text: "OTHER EXPERT SUGGESTIONS : ",
-            },
-            ...critdata,
-          ],
-        });
-  
-        const prompt = ChatPromptTemplate.fromMessages([
-          [
-            "system",
-            `You are a Social Media Content Marketing expert with speciality in Instagram Marketing plus you have phd in English Litrature.`,
-          ],
-          [
-            "human",
-            `You are given the task to apply the feedback received from another Social Media Content Marketing expert to improve the respective user Instagram posts.
+  } else {
+    if (isfeedBackOkay === false && critiquefeedback) {
+
+      const resdata = mapResearchDatatoHumanmessage(JSON.parse(researcheddata));
+      const critdata = feedbacktoHumanmessage(JSON.parse(critiquefeedback));
+
+      const postswithcrit = new HumanMessage({
+        content: [
+          {
+            type: "text",
+            text: "USER INSTAGRAM POST'S : ",
+          },
+          ...resdata,
+          {
+            type: "text",
+            text: "OTHER EXPERT SUGGESTIONS : ",
+          },
+          ...critdata,
+        ],
+      });
+
+      const prompt = ChatPromptTemplate.fromMessages([
+        [
+          "system",
+          `You are a Social Media Content Marketing expert with speciality in Instagram Marketing plus you have phd in English Litrature.`,
+        ],
+        [
+          "human",
+          `You are given the task to apply the feedback received from another Social Media Content Marketing expert to improve the respective user Instagram posts.
             Each post given in user instagram posts contains a caption text, image promt for Openai Dalle related to caption text and viral tags related to it.
             Apply the expert feedback respective to each post. If the feedback provided is "okay" do not change the image promt,caption or tags. If feedback is not "okay"
             then apply the feedback to improve.`,
-          ],
-          postswithcrit,
-        ]);
-  
-        const tool = new ContentImprover();
-        const model = new ChatOpenAI({
-          model: "gpt-4o",
-          temperature: 0.9
-        });
-  
-        const modelWithTools = model.withStructuredOutput(tool);
-        // @ts-ignore
-        const chain = prompt.pipe(modelWithTools).pipe(tool);
-  
-        const response = await chain.invoke({});
-        const res: z.infer<typeof FeedbackSchema> = JSON.parse(response);
+        ],
+        postswithcrit,
+      ]);
 
-        console.log("BAD FEED", res)
-        return {
-          researcheddata: JSON.stringify(res),
-        };
-      }
+      const tool = new ContentImprover();
+      const model = new ChatOpenAI({
+        model: "gpt-4o",
+        temperature: 0.9,
+      });
+
+      const modelWithTools = model.withStructuredOutput(tool);
+      // @ts-ignore
+      const chain = prompt.pipe(modelWithTools).pipe(tool);
+
+      const response = await chain.invoke({});
+      const res: z.infer<typeof FeedbackSchema> = JSON.parse(response);
+
+      console.log("BAD FEED", res);
+      return {
+        researcheddata: JSON.stringify(res),
+      };
     }
 
-    return {}
+    return {};
   }
 }
