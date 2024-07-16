@@ -9,16 +9,11 @@ import ManageIgPosts from "@/components/ManageIgPosts";
 
 
 export default async function Ig() {
-  // imgGentesterFunc()
-  // testGraph();
-
   const igpostsdata = await db.select().from(igposts);
 
-  // console.log("REC", igpostsdata)
   return (
     <>
-      <ManageIgPosts data={igpostsdata} />
-
+      <ManageIgPosts data={igpostsdata.reverse()} />
     </>
   );
 }

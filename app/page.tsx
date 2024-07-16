@@ -1,7 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ThemeToggler } from "./theme-toggle";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Github } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -17,6 +16,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast"
 
 const formSchema = z.object({
   userquery: z.string().min(3, {
@@ -24,17 +25,48 @@ const formSchema = z.object({
   }),
 })
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
-  }
 
 
 
 export default function Home() {
-  
+  const { toast } = useToast()
+  const router = useRouter();
+
+  const [loading, setLoading] = useState<boolean>(false)
+
+  //submit handler.
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true)
+    const req = {
+      userquery: values.userquery,
+    }
+
+    // console.log(req)
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req),
+    };
+    const genPosts = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ig/generate`, requestOptions);
+
+    const res = await genPosts.json();
+    if(res){
+      toast({
+        variant: "default",
+        description: "INSTAGRAM POSTS GENERATED",
+        className: "bg-green-400/20 backdrop-blur-lg"
+      });
+      router.push(`/ig/`)
+    }else{
+      toast({
+        variant: "destructive",
+        description: res.error,
+      });
+    }
+    
+  }
+
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,84 +74,50 @@ export default function Home() {
       userquery: "",
     },
   })
-  return (
-    <>
-      <div className="flex flex-col relative mx-auto h-screen w-full max-w-7xl px-6 md:px-8 lg:px-12">
 
-        <header className="flex items-center justify-between py-8">
-          <p className="text-lg animate-text-gradient inline-flex bg-gradient-to-r from-neutral-900 via-slate-500 to-neutral-500 bg-[200%_auto] bg-clip-text leading-tight text-transparent dark:from-neutral-100 dark:via-slate-400 dark:to-neutral-400">GPT-Instagram</p>
-          <nav className="flex justify-between gap-6">
-            <ThemeToggler />
-          </nav>
-        </header>
-
-        <div className="pt-8 grow">
-          <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-2">
-            <div className="mb-8 flex">
-              <span className="relative inline-block overflow-hidden rounded-full p-[1px]">
-                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#a9a9a9_0%,#0c0c0c_50%,#a9a9a9_100%)] dark:bg-[conic-gradient(from_90deg_at_50%_50%,#171717_0%,#737373_50%,#171717_100%)]" />
-                <div className="inline-flex h-full w-full cursor-pointer justify-center rounded-full bg-white px-3 py-1 text-xs font-medium leading-5 text-slate-600 backdrop-blur-xl dark:bg-black dark:text-slate-200">
-                  ⚡️⚡️⚡️ Multi Agent Instagram AI ........ Viral Posts with your personality ⚡️⚡️⚡️
-                  <span className="inline-flex items-center pl-2 text-black dark:text-white">
-                    {' '}
-                  </span>
-                </div>
-              </span>
-            </div>
-            <p className="text-center mb-2 text-2xl font-medium animate-text-gradient inline-flex bg-gradient-to-r from-neutral-900 via-slate-500 to-neutral-500 bg-[200%_auto] bg-clip-text leading-tight text-transparent dark:from-neutral-100 dark:via-slate-400 dark:to-neutral-400 text-gray-900 dark:text-gray-50 sm:text-6xl">
-
-              <span className="animate-text-gradient inline-flex bg-gradient-to-r from-neutral-900 via-slate-500 to-neutral-500 bg-[200%_auto] bg-clip-text leading-tight text-transparent dark:from-neutral-100 dark:via-slate-400 dark:to-neutral-400">
-                GPT-Instagram{' '}
-              </span>
-            </p>
-            <p className="mt-6 text-center text-lg leading-6 text-gray-600 dark:text-gray-200">
-              A Multi Agent Instagram AI to generate post recomendations on a user given topic with user personality from historical User Instagram Posts.
-            </p>
-            <div className="mt-10 flex gap-4">
-
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                  <FormField
-                    control={form.control}
-                    name="userquery"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Posts Based on Toics</FormLabel>
-                        <FormControl>
-                          <Input placeholder="user query here" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Add related topics keywords here. eg "US ELECTIONS 2024","Latest Viral News"
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit">
-                    Start Recommendation Engine <ArrowRight className="pl-0.5" size={16} />
-                  </Button>{' '}
-                </form>
-              </Form>
-
-
-            </div>
-          </div>
+  if (loading) {
+    return (
+      <div className="text-center">
+        <div role="status">
+          <svg aria-hidden="true" className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+          </svg>
+          <span className="sr-only">Loading...</span>
         </div>
-        <footer className="py-6">
-          <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between">
-            <div className="text-center md:text-left mb-4 md:mb-0">
-              <p className="text-sm">© 2024 GPT-Instagram by MODSetter</p>
-            </div>
-            <div className="flex items-center justify-center space-x-4">
-              <Link className="text-gray-400 hover:text-blue-500 transition-colors" href="https://github.com/MODSetter/next-toggle" rel="noopener noreferrer">
-                <Github className="h-6 w-6" />
-                <span className="sr-only">GitHub</span>
-              </Link>
-
-            </div>
-          </div>
-        </footer>
+        AI AGENT WORKING (estimated wait: 2min)
       </div>
-    </>
-  );
+    )
+  } else {
+    return (
+      <>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="userquery"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Posts Based on Toics</FormLabel>
+                  <FormControl>
+                    <Input placeholder="user query here" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Add related topics keywords here. eg "Latest Viral News"
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">
+              Start Recommendation Engine <ArrowRight className="pl-0.5" size={16} />
+            </Button>
+          </form>
+        </Form>
+
+      </>
+    );
+  }
+
 }

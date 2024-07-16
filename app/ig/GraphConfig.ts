@@ -82,7 +82,7 @@ export function createGraph() {
 export async function testGraph() {
   const app = createGraph();
   const req = await fetch(
-    `https://graph.instagram.com/me/media?fields=caption,media_url,media_type&access_token=https://graph.instagram.com/me?fields=id,username&access_token=IGQWRPaDVldGx0OUpsM3VUeElNQWMyM0lXTVJFTHVNeGVLVjg1OFg4bVplblZASN1hDXzBJOE5ZAM25JdWZA2S0xkS2VfdUpDUV9tOEMwS2lGbzRvNm9DZAFZAyR3JaUDRyOXdvNk1KSGFYRmVneW1NdXVYTjlXcm9HN0kZD`,
+    `https://graph.instagram.com/me/media?fields=caption,media_url,media_type&access_token=https://graph.instagram.com/me?fields=id,username&access_token=YOUR_INSTAGRAM_TOKEN_HERE`,
   );
 
   const res = await req.json();
