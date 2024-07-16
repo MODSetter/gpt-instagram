@@ -80,21 +80,6 @@ const FeedbackSchema = z.array(
   }),
 );
 
-const isFeedBackOkay = (critiquefeedback: z.infer<typeof FeedbackSchema>) => {
-  let isOkay = true;
-  for (const d of critiquefeedback) {
-    if (
-      d.imagepromtfeedback.toLocaleLowerCase() !== "okay" ||
-      d.igcaptionfeedback.toLocaleLowerCase() !== "okay" ||
-      d.tagsfeedback.toLocaleLowerCase() !== "okay"
-    ) {
-      isOkay = false;
-    }
-  }
-
-  return isOkay;
-};
-
 const feedbacktoHumanmessage = (data: z.infer<typeof FeedbackSchema>) => {
   let humanmsg = [];
 
@@ -158,6 +143,56 @@ const mapResearchDatatoHumanmessage = (
   return humanmsg;
 };
 
+
+
+const structuredOutputParser = (
+  message: AIMessage,
+): FunctionsAgentAction | AgentFinish => {
+  if (message.content && typeof message.content !== "string") {
+    throw new Error("This agent cannot parse non-string model responses.");
+  }
+  if (message.additional_kwargs.function_call) {
+    const { function_call } = message.additional_kwargs;
+    try {
+      const toolInput = function_call.arguments
+        ? JSON.parse(function_call.arguments)
+        : {};
+      // If the function call name is `response` then we know it's used our final
+      // response function and can return an instance of `AgentFinish`
+      if (function_call.name === "response") {
+        return { returnValues: { ...toolInput }, log: message.content };
+      }
+      return {
+        tool: function_call.name,
+        toolInput,
+        log: `Invoking "${function_call.name}" with ${
+          function_call.arguments ?? "{}"
+        }\n${message.content}`,
+        messageLog: [message],
+      };
+    } catch (error) {
+      throw new Error(
+        `Failed to parse function arguments from chat model response. Text: "${function_call.arguments}". ${error}`,
+      );
+    }
+  } else {
+    return {
+      returnValues: { output: message.content },
+      log: message.content,
+    };
+  }
+};
+
+const formatAgentSteps = (steps: AgentStep[]): BaseMessage[] =>
+  steps.flatMap(({ action, observation }) => {
+    if ("messageLog" in action && action.messageLog !== undefined) {
+      const log = action.messageLog as BaseMessage[];
+      return log.concat(new FunctionMessage(observation, action.tool));
+    } else {
+      return [new AIMessage(action.log)];
+    }
+  });
+
 export async function extractPostSuggestions(
   state: GraphState,
 ): Promise<Partial<GraphState>> {
@@ -213,7 +248,7 @@ export async function extractPostSuggestions(
       [
         "human",
         `You are given the detailed Investigative analysis of a person's or suspect's Instagram post's image style and caption text writing style.
-        Based on the given user QUERY you must always call one of the provided tools and then generate highly relevant exact 3 Instagram post suggestion's.
+        Based on the given user QUERY you must always call one of the provided tools and then generate highly relevant exact 5 Instagram post suggestion's.
         Each post suggestion should contain a unique id, caption text without hashtags but with emotes inspired little bit by the person's(also known as suspect) caption text writing style and
         a image explanation promt of that caption text suitable for OpenAI Dalle inspired little bit by the person's(also known as suspect) image style and
         popular hashtags that can be used with post.`,
@@ -244,54 +279,6 @@ export async function extractPostSuggestions(
       description: "Return the response to the user",
       parameters: zodToJsonSchema(responseSchema),
     };
-
-    const structuredOutputParser = (
-      message: AIMessage,
-    ): FunctionsAgentAction | AgentFinish => {
-      if (message.content && typeof message.content !== "string") {
-        throw new Error("This agent cannot parse non-string model responses.");
-      }
-      if (message.additional_kwargs.function_call) {
-        const { function_call } = message.additional_kwargs;
-        try {
-          const toolInput = function_call.arguments
-            ? JSON.parse(function_call.arguments)
-            : {};
-          // If the function call name is `response` then we know it's used our final
-          // response function and can return an instance of `AgentFinish`
-          if (function_call.name === "response") {
-            return { returnValues: { ...toolInput }, log: message.content };
-          }
-          return {
-            tool: function_call.name,
-            toolInput,
-            log: `Invoking "${function_call.name}" with ${
-              function_call.arguments ?? "{}"
-            }\n${message.content}`,
-            messageLog: [message],
-          };
-        } catch (error) {
-          throw new Error(
-            `Failed to parse function arguments from chat model response. Text: "${function_call.arguments}". ${error}`,
-          );
-        }
-      } else {
-        return {
-          returnValues: { output: message.content },
-          log: message.content,
-        };
-      }
-    };
-
-    const formatAgentSteps = (steps: AgentStep[]): BaseMessage[] =>
-      steps.flatMap(({ action, observation }) => {
-        if ("messageLog" in action && action.messageLog !== undefined) {
-          const log = action.messageLog as BaseMessage[];
-          return log.concat(new FunctionMessage(observation, action.tool));
-        } else {
-          return [new AIMessage(action.log)];
-        }
-      });
 
     const llm = new ChatOpenAI({
       model: "gpt-3.5-turbo",

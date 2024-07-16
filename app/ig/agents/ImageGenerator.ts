@@ -37,12 +37,6 @@ export async function extractPostSuggestionsWithImages(
     const imageURL = await tool.invoke(d.imagepromt);
     const entry = { ...d, imageurl: imageURL };
     response.push(entry);
-    // setTimeout(async function() {
-    //   console.log("Dalle can only do 5 img per mn");
-    //   const imageURL = await tool.invoke(d.imagepromt);
-    //   const entry = {...d, imageurl: imageURL}
-    //   response.push(entry)
-    // }, 14000);
   }
 
   return {

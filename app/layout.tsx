@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Public_Sans } from "next/font/google";
+import { Toaster } from "@/components/ui/toaster"
 
 import { ThemeProvider } from "./theme-provider";
 
@@ -42,6 +43,7 @@ export default function RootLayout({
           >
             {children}
           </ThemeProvider>
+          <Toaster />
       </body>
     </html>
   );
