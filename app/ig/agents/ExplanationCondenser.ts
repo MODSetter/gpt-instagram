@@ -61,7 +61,7 @@ export const mapExplainedDatatoHumanmessage = (data: IgExplainedData[]) => {
 export async function extractCondencedExplanation(
   state: GraphState,
 ): Promise<Partial<GraphState>> {
-  console.log("In Exp Cond")
+  console.log("================In ExplanationCondenser Agent==============")
   const { igexplaineddata } = state;
 
   if (!igexplaineddata) {
@@ -95,7 +95,7 @@ export async function extractCondencedExplanation(
 
   const tool = new ExtractExplainedDataExplanation();
   const model = new ChatOpenAI({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o",
   });
 
   const modelWithTools = model.withStructuredOutput(tool);
@@ -105,7 +105,7 @@ export async function extractCondencedExplanation(
   const response = await chain.invoke({});
   const explainedData: z.infer<typeof ResSchema> = JSON.parse(response);
 
-  console.log("EXP DATA",explainedData)
+  // console.log("EXP DATA",explainedData)
 
   return {
     userimagestyle: explainedData.mainimageanalysis,

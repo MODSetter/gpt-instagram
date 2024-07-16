@@ -205,10 +205,10 @@ export async function extractPostSuggestions(
     isfeedBackOkay,
   } = state;
 
-  console.log("In Ig Post Gen");
+  console.log("==================In IgPostGenerator Agent================");
 
   if (!researcheddata) {
-    console.log("In Ig Post Gen - no res data");
+    // console.log("In Ig Post Gen - no res data");
     if (!userimagestyle || !usertextstyle) {
       throw new Error("ExplanationCondenser Agent Failed");
     }
@@ -281,7 +281,7 @@ export async function extractPostSuggestions(
     };
 
     const llm = new ChatOpenAI({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o",
       temperature: 0.3,
     });
 
@@ -318,7 +318,7 @@ export async function extractPostSuggestions(
       input: query,
     });
 
-    console.log("iNITIAL GEN", res["postsuggestions"]);
+    // console.log("iNITIAL GEN", res["postsuggestions"]);
 
     return {
       researcheddata: JSON.stringify(res["postsuggestions"]),

@@ -51,7 +51,7 @@ const ManagePost = ({
     fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ig/${id}`)
       .then(response => response.json())
       .then(data => {
-        console.log(data)
+        // console.log(data)
         setPost(data)
       })
   }, []);

@@ -71,7 +71,6 @@ const ManageIgPosts = ({ data }: { data: igpostsdataschema[] }) => {
             <hr />
             <div className="flex justify-center gap-2 mx-2 my-8">
               <Button variant="secondary" onClick={() => onEdit(igpost.postid)}>AI Edit</Button>
-              {/* <Button variant="destructive" onClick={() => onDelete(igpost.postid)}>Delete</Button> */}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="outline">Delete</Button>

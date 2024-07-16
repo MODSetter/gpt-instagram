@@ -92,7 +92,7 @@ const isFeedBackOkay = (critiquefeedback: z.infer<typeof isFeedbackSchema>) => {
 export async function viralCritiquer(
   state: GraphState,
 ): Promise<Partial<GraphState>> {
-  console.log("In viral c");
+  console.log("=================In Viral Critique Agent==================");
   const { researcheddata } = state;
 
   if (!researcheddata) {

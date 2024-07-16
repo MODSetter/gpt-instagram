@@ -39,7 +39,7 @@ const graphChannels = {
 const verifyQuality = (
   state: GraphState,
 ): "image_generator_node" | "ig_post_generator_node" => {
-  console.log("in verifyQual");
+  console.log("=============IN verifyQual Switch===============");
   const { researcheddata, isfeedBackOkay } = state;
 
   if (!researcheddata) {

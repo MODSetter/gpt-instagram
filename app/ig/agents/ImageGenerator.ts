@@ -5,7 +5,7 @@ import { ImageGenSchema, ResearchedDataSchema } from "../DataTypes";
 
 export const tool = new DallEAPIWrapper({
   n: 1, // Default
-  model: "dall-e-2", // Default
+  model: "dall-e-3", // Default
   apiKey: process.env.OPENAI_API_KEY, // Default
   responseFormat: "b64_json",
 });
@@ -22,7 +22,7 @@ export const ImgGenDataSchema = z.array(
 export async function extractPostSuggestionsWithImages(
   state: GraphState,
 ): Promise<Partial<GraphState>> {
-  console.log("In Img gen");
+  console.log("==================In ImgGenerator Agent=======================");
   const { researcheddata } = state;
 
   if (!researcheddata) {

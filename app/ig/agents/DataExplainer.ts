@@ -43,7 +43,7 @@ export class ExtractIgDataExplanation extends StructuredTool {
 export async function extractDataExplanation(
   state: GraphState,
 ): Promise<Partial<GraphState>> {
-  console.log("In Data Explaineer")
+  console.log("=========================In Data Explainer Agent=========================")
   const { igrawdata } = state;
 
   const igdata: IGApiResponse[] = JSON.parse(igrawdata);
