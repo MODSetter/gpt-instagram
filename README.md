@@ -1,3 +1,3 @@
 # GPT-INSTAGRAM
 
-A GPT-based autonomous multi-agent AI app that recommends Instagram posts reflecting your personality, using insights drawn from your historical Instagram activity.
+A GPT-based autonomous multi-agent AI app using Next.js, LangChain.js, and LangGraph.js to research and recommend Instagram posts based on user queries and personalities extracted from user’s historical Instagram data via Instagram Basic Display API.

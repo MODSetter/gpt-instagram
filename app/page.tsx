@@ -1,7 +1,7 @@
 "use client"
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Github } from "lucide-react";
+import { ArrowRight, Github, Settings } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -50,20 +50,20 @@ export default function Home() {
     const genPosts = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ig/generate`, requestOptions);
 
     const res = await genPosts.json();
-    if(res){
+    if (res) {
       toast({
         variant: "default",
         description: "INSTAGRAM POSTS GENERATED",
         className: "bg-green-400/20 backdrop-blur-lg"
       });
       router.push(`/ig/`)
-    }else{
+    } else {
       toast({
         variant: "destructive",
         description: res.error,
       });
     }
-    
+
   }
 
 
@@ -110,9 +110,12 @@ export default function Home() {
                 </FormItem>
               )}
             />
-            <Button type="submit">
-              Start Recommendation Engine <ArrowRight className="pl-0.5" size={16} />
-            </Button>
+            <div className="flex flex-col">
+              <Button type="submit">
+                <Settings className="mx-2" size={16} /> Start Recommendation Engine <Settings className="mx-2" size={16} />
+              </Button>
+            </div>
+
           </form>
         </Form>
 

@@ -117,7 +117,7 @@ const ManagePost = ({
         className: "bg-green-400/20 backdrop-blur-lg"
       });
 
-      // router.push(`/ig/manage/${id}`)
+      router.push(`/ig/`)
     } else {
       toast({
         variant: "destructive",
@@ -144,10 +144,10 @@ const ManagePost = ({
     if (post) {
       return (
         <div className='grid place-content-center'>
-          <div className="max-w-md rounded overflow-hidden shadow-lg">
+          <div className="max-w-md rounded overflow-hidden border shadow-lg">
             <img className="w-full" src={`data:image/png;base64, ${post.imageurl}`} alt="Sunset in the mountains" />
             <div className="px-6 py-4">
-              <p className="text-gray-700 text-base">
+              <p className="text-base">
                 {post.caption}
               </p>
             </div>

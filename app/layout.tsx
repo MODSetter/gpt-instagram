@@ -6,6 +6,7 @@ import { ThemeProvider } from "./theme-provider";
 import Link from "next/link";
 import { Github } from "lucide-react";
 import { ThemeToggler } from "./theme-toggle";
+import { Button } from "@/components/ui/button";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
 
@@ -30,8 +31,9 @@ export default function RootLayout({
           <div className="flex flex-col relative mx-auto h-screen w-full max-w-7xl px-6 md:px-8 lg:px-12">
 
             <header className="flex items-center justify-between py-8">
-              <p className="text-lg animate-text-gradient inline-flex bg-gradient-to-r from-neutral-900 via-slate-500 to-neutral-500 bg-[200%_auto] bg-clip-text leading-tight text-transparent dark:from-neutral-100 dark:via-slate-400 dark:to-neutral-400">GPT-Instagram</p>
+              <Link href="/" className="text-lg animate-text-gradient inline-flex bg-gradient-to-r from-neutral-900 via-slate-500 to-neutral-500 bg-[200%_auto] bg-clip-text leading-tight text-transparent dark:from-neutral-100 dark:via-slate-400 dark:to-neutral-400">GPT-Instagram</Link>
               <nav className="flex justify-between gap-6">
+                <Link href="/ig"><Button className="bg-transparent" variant="outline">IG Posts</Button></Link>
                 <ThemeToggler />
               </nav>
             </header>
@@ -74,7 +76,7 @@ export default function RootLayout({
                   <p className="text-sm">© 2024 GPT-Instagram by MODSetter</p>
                 </div>
                 <div className="flex items-center justify-center space-x-4">
-                  <Link className="text-gray-400 hover:text-blue-500 transition-colors" href="https://github.com/MODSetter/next-toggle" rel="noopener noreferrer">
+                  <Link className="text-gray-400 hover:text-blue-500 transition-colors" href="https://github.com/MODSetter/gpt-instagram" rel="noopener noreferrer">
                     <Github className="h-6 w-6" />
                     <span className="sr-only">GitHub</span>
                   </Link>
