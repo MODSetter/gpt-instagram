@@ -145,7 +145,7 @@ const mapResearchDatatoHumanmessage = (
 
 
 
-const structuredOutputParser = (
+export const structuredOutputParser = (
   message: AIMessage,
 ): FunctionsAgentAction | AgentFinish => {
   if (message.content && typeof message.content !== "string") {
@@ -183,7 +183,7 @@ const structuredOutputParser = (
   }
 };
 
-const formatAgentSteps = (steps: AgentStep[]): BaseMessage[] =>
+export const formatAgentSteps = (steps: AgentStep[]): BaseMessage[] =>
   steps.flatMap(({ action, observation }) => {
     if ("messageLog" in action && action.messageLog !== undefined) {
       const log = action.messageLog as BaseMessage[];

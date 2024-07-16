@@ -1,6 +1,19 @@
 "use client"
+import { useToast } from "@/components/ui/use-toast"
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 
 
 interface igpostsdataschema {
@@ -13,12 +26,27 @@ interface igpostsdataschema {
 
 const ManageIgPosts = ({ data }: { data: igpostsdataschema[] }) => {
   const router = useRouter();
+  const { toast } = useToast()
 
-  function onDelete(postId: number) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    alert(postId)
-    console.log("YOOOOOOOOOO", postId)
+
+  async function onDelete(postId: number) {
+    const postDel = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ig/${postId}`, { method: "DELETE" })
+
+    const post = await postDel.json();
+
+    if (post.deletedId) {
+      toast({
+        variant: "default",
+        description: "INSTAGRAM POST DELETED",
+        className: "bg-green-400/20 backdrop-blur-lg"
+      });
+      router.push(`/ig/`)
+    } else {
+      toast({
+        variant: "destructive",
+        description: post.error,
+      });
+    }
   }
 
   function onEdit(postId: number) {
@@ -43,7 +71,25 @@ const ManageIgPosts = ({ data }: { data: igpostsdataschema[] }) => {
             <hr />
             <div className="flex justify-center gap-2 mx-2 my-8">
               <Button variant="secondary" onClick={() => onEdit(igpost.postid)}>AI Edit</Button>
-              <Button variant="destructive" onClick={() => onDelete(igpost.postid)}>Delete</Button>
+              {/* <Button variant="destructive" onClick={() => onDelete(igpost.postid)}>Delete</Button> */}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline">Delete</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your
+                      data.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => onDelete(igpost.postid)}>Continue</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         )

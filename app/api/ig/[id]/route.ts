@@ -16,3 +16,15 @@ export async function GET(request: Request, context: { params: Params }) {
         return NextResponse.json({error: "Something Wrong with ID"}, { status: 500 });
       }
 }
+
+export async function DELETE(request: Request, context: { params: Params }) {
+  const deletedPostIds: { deletedId: number }[] = await db.delete(igposts)
+  .where(eq(igposts.postid, context.params.id))
+  .returning({ deletedId: igposts.postid });
+
+  if(deletedPostIds){
+      return NextResponse.json(deletedPostIds[0], { status: 200 });
+    }else{
+      return NextResponse.json({error: "Something Wrong with ID"}, { status: 500 });
+    }
+}

@@ -1,13 +1,19 @@
 import { tool } from "@/app/ig/agents/ImageGenerator";
 import { HumanMessage } from "@langchain/core/messages";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import type { FunctionsAgentAction } from "langchain/agents/openai/output_parser";
+import { convertToOpenAIFunction } from "@langchain/core/utils/function_calling";
+import zodToJsonSchema from "zod-to-json-schema";
+import { formatAgentSteps, searchTool, structuredOutputParser } from "@/app/ig/agents/IgPostGenerator";
+import { RunnableSequence } from "@langchain/core/runnables";
+import { AgentExecutor, AgentStep } from "langchain/agents";
 
 const responseSchema = z.object({
   imagepromt: z.string().describe("Suggested new image promt"),
-  caption: z.string().describe("Suggested new Caption text without hashtags"),
+  caption: z.string().describe("Suggested new Caption text with emotes but without hashtags"),
   tags: z
     .array(z.string().describe("suggested hashtag"))
     .describe("List of all the new suggested hashtags"),
@@ -68,19 +74,61 @@ export async function POST(req: NextRequest) {
     [
       "human",
       `You are given the task to apply the user feedback to improve a given Instagram Post.
-          Instagram Post contains its caption text, tags and a image promt for OpenAI Dalle for its caption text and its tags.
-          You need to apply the user feedback to improve image promt, caption text and tags of the Instagram post.
+          Instagram Post contains its caption text, tags and a image promt for OpenAI Dalle based on its caption text and its tags.
+          Based on the given user FEEDBACK to apply you must always call one of the provided tools and improve image promt, caption text and tags of the Instagram post.
           Return new image promt, caption text and tags which is highly relevent to user feedback.`,
     ],
     postToEditMessage,
     ["human", `USER FEEDBACK TO APPLY : ${dataRes.userfeedback}`],
+    new MessagesPlaceholder("agent_scratchpad"),
   ]);
+  const responseOpenAIFunction = {
+    name: "response",
+    description: "Return the response to the user",
+    parameters: zodToJsonSchema(responseSchema),
+  };
 
+  const llm = new ChatOpenAI({
+    model: "gpt-3.5-turbo",
+    temperature: 0.3,
+  });
 
-  const structuredLlm = model.withStructuredOutput(responseSchema);
+  const llmWithTools = llm.bind({
+    functions: [convertToOpenAIFunction(searchTool), responseOpenAIFunction],
+  });
 
-  const newPost = await structuredLlm.invoke("");
+  /** Create the runnable */
+  const runnableAgent = RunnableSequence.from<{
+    input: string;
+    steps: Array<AgentStep>;
+  }>(
+    // @ts-ignore
+    [
+      {
+        input: (i) => i.input,
+        agent_scratchpad: (i) => formatAgentSteps(i.steps),
+      },
+      prompt,
+      llmWithTools,
+      structuredOutputParser,
+    ],
+  );
 
+  const executor = AgentExecutor.fromAgentAndTools({
+    // @ts-ignore
+    agent: runnableAgent,
+    // @ts-ignore
+    tools: [searchTool],
+  });
+
+  // const structuredLlm = model.withStructuredOutput(responseSchema);
+
+  // const newPost = await structuredLlm.invoke("");
+
+  const newPost = await executor.invoke({});
+
+  // console.log(newPost)
+// @ts-ignore
   const postWithImage = await extractPostSuggestionWithImages(newPost);
 
   const postWithid = {...postWithImage, postid: dataRes.posttoedit.postid}
