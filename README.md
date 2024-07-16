@@ -1,4 +1,5 @@
 
+
 # GPT-INSTAGRAM
 
 A GPT-based autonomous multi-agent AI app using Next.js, LangChain.js, and LangGraph.js to research and recommend Instagram posts based on user queries and personalities extracted from user’s historical Instagram data via Instagram Basic Display API.
@@ -7,6 +8,18 @@ A GPT-based autonomous multi-agent AI app using Next.js, LangChain.js, and LangG
 ## Video
 
 https://github.com/user-attachments/assets/ac1850e2-0119-4531-9f9c-2422ac40f48d
+
+## Walkthrough
+
+![Highlevel](https://github.com/user-attachments/assets/b9f0fb41-8428-460d-b2ab-7f9dbeb0ba8e)
+
+### AGENTS
+1.  **Data Explainer Agent**: Our Sherlock Holmes agent generating information about User Historical Posts.
+2.  **Explanation Condenser Agent**:  Our Sherlock Holmes Agent with phd in English literature to generate final report on the user posting style.
+3.  **IG Post Generator Agent**: Our researcher to generate Instagram Post Suggestions based on user personality and Viral Critique Agent feedback.
+4.  **Viral Critique Agent**: Our Marketing expert to ensure that post suggestions have potential to get viral.
+5.  **Image Generator Agent**: Our artist, to generate images.
+6.  **Post Improver Agent**: Our Agent who talks with user to improve the posts.
 
 ## INITIAL SETUP
 
