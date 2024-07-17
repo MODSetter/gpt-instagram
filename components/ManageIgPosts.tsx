@@ -73,7 +73,7 @@ const ManageIgPosts = ({ data }: { data: igpostsdataschema[] }) => {
               <Button variant="secondary" onClick={() => onEdit(igpost.postid)}>AI Edit</Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline">Delete</Button>
+                  <Button variant="destructive">Delete</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
