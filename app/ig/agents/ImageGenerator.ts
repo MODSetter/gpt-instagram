@@ -4,9 +4,9 @@ import { DallEAPIWrapper } from "@langchain/openai";
 import { ImageGenSchema, ResearchedDataSchema } from "../DataTypes";
 
 export const tool = new DallEAPIWrapper({
-  n: 1, // Default
-  model: "dall-e-3", // Default
-  apiKey: process.env.OPENAI_API_KEY, // Default
+  n: 1, 
+  model: "dall-e-3", 
+  apiKey: process.env.OPENAI_API_KEY, 
   responseFormat: "b64_json",
 });
 

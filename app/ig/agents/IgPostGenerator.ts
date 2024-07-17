@@ -1,4 +1,3 @@
-// import { StructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
 import {
   ChatPromptTemplate,
@@ -12,7 +11,6 @@ import {
   HumanMessage,
 } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
-// import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
 import { AgentExecutor, AgentFinish, AgentStep } from "langchain/agents";
 
 import { zodToJsonSchema } from "zod-to-json-schema";

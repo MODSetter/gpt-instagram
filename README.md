@@ -23,7 +23,9 @@ https://github.com/user-attachments/assets/ac1850e2-0119-4531-9f9c-2422ac40f48d
 
 ## INITIAL SETUP
 
-1. Since GPT-Instagram works with your historical Instagram Posts
+1. First give this repo a ✨✨ star ✨✨ for good luck. 😉
+
+2. Since GPT-Instagram works with your historical Instagram Posts
     Information to extract your style you need to follow this guide to
     get your Instagram Access Token to extract data via Instagram Basic
     Display API.
@@ -39,9 +41,9 @@ You can generate Your token from facebook app dashboard at now at 'Instagram Bas
 Click on 'Generate Token' to get your IG Access Token.
 
 
-2. Get your OpenAI API key from https://openai.com/index/openai-api/
-3. Get your Tavily Search API key from https://tavily.com/#api
-4. Fill in your `.env`  file. `env.example` explains it pretty well.
+3. Get your OpenAI API key from https://openai.com/index/openai-api/
+4. Get your Tavily Search API key from https://tavily.com/#api
+5. Fill in your `.env`  file. `env.example` explains it pretty well.
 
 | KEY | DESCRIPTION |
 |--|--|
@@ -53,7 +55,7 @@ Click on 'Generate Token' to get your IG Access Token.
 
 
 
-5. Since GPT-Instagram uses Drizzle ORM make sure to run `yarn generate` & `yarn migrate` before you run the project to create your DB.
+6. Since GPT-Instagram uses Drizzle ORM make sure to run `yarn` then `yarn generate` & `yarn migrate` before you run the project to create your DB.
 
-6. Finally run `yarn dev` to run the Application.
+7. Finally run `yarn dev` to run the Application.
 

@@ -6,13 +6,6 @@ import { HumanMessage } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
 import { IGApiResponse } from "../DataTypes";
 
-// export interface IgRawDataSchema {
-//     caption: string,
-//     media_url: string,
-//     media_type: string,
-//     id: string
-// }
-
 export class ExtractIgDataExplanation extends StructuredTool {
   schema = z.object({
     explainedData: z.array(
@@ -48,7 +41,7 @@ export async function extractDataExplanation(
 
   const igdata: IGApiResponse[] = JSON.parse(igrawdata);
 
-  console.log("In Data Explaineer IgData:", igdata)
+  // console.log("In Data Explaineer IgData:", igdata)
 
   const mapIgDatatoHumanmessage = (data: IGApiResponse[]) => {
     let humanmsg = [];
@@ -121,7 +114,7 @@ export async function extractDataExplanation(
   const chain = prompt.pipe(modelWithTools).pipe(tool);
 
   const response = await chain.invoke({});
-  const explainedData: string = JSON.parse(response);
+  // const explainedData: string = JSON.parse(response);
 
   return {
     igexplaineddata: response,

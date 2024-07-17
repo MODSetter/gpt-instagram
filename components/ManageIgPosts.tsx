@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 import { useToast } from "@/components/ui/use-toast"
 import { Button } from "./ui/button";
@@ -65,6 +66,7 @@ const ManageIgPosts = ({ data }: { data: igpostsdataschema[] }) => {
             </div>
             <div className="px-6 pt-4 pb-2">
               {igpost.tags?.map((tag) => {
+                // eslint-disable-next-line react/jsx-key
                 return (<span className="inline-block bg-emerald-400/10 rounded-full px-3 py-1 text-sm font-semiboldmr-2 mx-1 my-2">{tag}</span>)
               })}
             </div>
