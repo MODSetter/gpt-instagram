@@ -1,5 +1,3 @@
-
-
 # GPT-INSTAGRAM
 
 A GPT-based autonomous multi-agent AI app using Next.js, LangChain.js, and LangGraph.js to research and recommend Instagram posts based on user queries and personalities extracted from user’s historical Instagram data via Instagram Basic Display API.
@@ -58,4 +56,10 @@ Click on 'Generate Token' to get your IG Access Token.
 6. Since GPT-Instagram uses Drizzle ORM make sure to run `yarn` then `yarn generate` & `yarn migrate` before you run the project to create your DB.
 
 7. Finally run `yarn dev` to run the Application.
+
+---
+
+This app was done for Tavily AI Intern Application. This is just a toy project don't expect any further updates. 
+
+---
 
