@@ -40,7 +40,7 @@
     "fs": "^0.0.1-security",
     "langchain": "^0.2.7",
     "lucide-react": "^0.408.0",
-    "next": "^14.2.3",
+    "next": "^14.2.10",
     "next-themes": "^0.3.0",
     "pg": "^8.12.0",
     "postcss": "8.4.31",
