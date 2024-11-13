@@ -38,7 +38,7 @@
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.12",
     "fs": "^0.0.1-security",
-    "langchain": "^0.2.7",
+    "langchain": "^0.2.19",
     "lucide-react": "^0.408.0",
     "next": "^14.2.10",
     "next-themes": "^0.3.0",
